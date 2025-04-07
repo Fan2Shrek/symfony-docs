@@ -159,32 +159,24 @@ Twig Extension & Autoconfiguration
 Thanks to Symfony's service handling, you can *extend* Symfony in many ways, like
 by creating an event subscriber or a security voter for complex authorization
 rules. Let's add a new filter to Twig called ``greet``. How? Create a class
-that extends ``AbstractExtension``::
+and use ``AsTwigFilter``::
 
     // src/Twig/GreetExtension.php
     namespace App\Twig;
 
-    use App\GreetingGenerator;
-    use Twig\Extension\AbstractExtension;
-    use Twig\TwigFilter;
+    use Twig\Attribute\AsTwigFilter;
 
-    class GreetExtension extends AbstractExtension
+    class GreetExtension
     {
         public function __construct(
             private GreetingGenerator $greetingGenerator,
         ) {
         }
 
-        public function getFilters(): array
-        {
-            return [
-                new TwigFilter('greet', [$this, 'greetUser']),
-            ];
-        }
-
+        #[AsTwigFilter('greet')]
         public function greetUser(string $name): string
         {
-            $greeting =  $this->greetingGenerator->getRandomGreeting();
+            $greeting = $this->greetingGenerator->getRandomGreeting();
 
             return "$greeting $name!";
         }
